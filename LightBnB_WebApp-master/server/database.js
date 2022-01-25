@@ -19,7 +19,7 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function(email) {
-  const queryString = `SELECT * FROM users WHERE email = $1`;
+  const queryString = `SELECT * FROM users WHERE email = $1;`;
   const values = [email];
 
   return pool
@@ -29,7 +29,6 @@ const getUserWithEmail = function(email) {
         return result.rows[0];
       }
       return null;
-      
     })
     .catch(err => {
       console.log(err.message);
@@ -43,7 +42,7 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  const queryString = `SELECT * FROM users WHERE id = $1`;
+  const queryString = `SELECT * FROM users WHERE id = $1;`;
   const values = [id];
 
   return pool
@@ -90,14 +89,14 @@ exports.addUser = addUser;
  */
 const getAllReservations = function(guest_id, limit = 10) {
   const queryString = `
-  SELECT properties.*
-  FROM properties
-  JOIN reservations ON properties.id = reservations.property_id
-  JOIN property_reviews ON properties.id = property_reviews.property_id
-  WHERE reservations.guest_id = $1
-  GROUP BY reservations.id, properties.id, properties.cost_per_night
-  ORDER BY start_date ASC
-  LIMIT $2;`;
+    SELECT properties.*
+    FROM properties
+    JOIN reservations ON properties.id = reservations.property_id
+    JOIN property_reviews ON properties.id = property_reviews.property_id
+    WHERE reservations.guest_id = $1
+    GROUP BY reservations.id, properties.id, properties.cost_per_night
+    ORDER BY start_date ASC
+    LIMIT $2;`;
   const values = [guest_id, limit];
 
   return pool
@@ -108,7 +107,6 @@ const getAllReservations = function(guest_id, limit = 10) {
     .catch(err => {
       console.log(err.message);
     });
-    
 };
 exports.getAllReservations = getAllReservations;
 
@@ -122,8 +120,11 @@ exports.getAllReservations = getAllReservations;
  */
 
 const getAllProperties = (options, limit = 10) => {
+  const queryString = `SELECT * FROM properties LIMIT $1;`;
+  const values = [limit];
+
   return pool
-    .query(`SELECT * FROM properties LIMIT $1`, [limit])
+    .query(queryString, values)
     .then(result => {
       return result.rows;
     })
