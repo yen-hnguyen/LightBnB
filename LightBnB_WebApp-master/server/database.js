@@ -89,12 +89,11 @@ exports.addUser = addUser;
  */
 const getAllReservations = function(guest_id, limit = 10) {
   const queryString = `
-    SELECT properties.*
+    SELECT properties.*, reservations.*
     FROM properties
-    JOIN reservations ON properties.id = reservations.property_id
-    JOIN property_reviews ON properties.id = property_reviews.property_id
-    WHERE reservations.guest_id = $1
-    GROUP BY reservations.id, properties.id, properties.cost_per_night
+    JOIN reservations ON properties.id = property_id
+    WHERE guest_id = $1
+    GROUP BY reservations.id, properties.id
     ORDER BY start_date ASC
     LIMIT $2;`;
   const values = [guest_id, limit];
@@ -120,8 +119,44 @@ exports.getAllReservations = getAllReservations;
  */
 
 const getAllProperties = (options, limit = 10) => {
-  const queryString = `SELECT * FROM properties LIMIT $1;`;
-  const values = [limit];
+  let queryString = `
+    SELECT properties.*, AVG(property_reviews.rating) as average_rating
+    FROM properties
+    JOIN property_reviews ON properties.id = property_id
+    WHERE TRUE`;
+  const values = [];
+
+  if (options.city) {
+    values.push(`%${options.city}%`);
+    queryString += ` AND city LIKE $${values.length}`;
+  }
+  if (options.owner_id) {
+    values.push(`${options.owner_id}`);
+    queryString += ` AND owner_id = $${values.length}`;
+  }
+  if (options.minimum_price_per_night) {
+    values.push(`${options.minimum_price_per_night * 100}`);
+    queryString += ` AND cost_per_night >= $${values.length}`;
+  }
+  if (options.maximum_price_per_night) {
+    values.push(`${options.maximum_price_per_night * 100}`);
+    queryString += ` AND cost_per_night <= $${values.length}`;
+  }
+
+  queryString += ` GROUP BY properties.id`;
+
+  if (options.minimum_rating) {
+    values.push(`${options.minimum_rating}`);
+    queryString += ` HAVING AVG(property_reviews.rating) >= $${values.length}`;
+  }
+  
+  values.push(limit);
+  queryString += `
+    ORDER BY cost_per_night
+    LIMIT $${values.length}`;
+
+  console.log(queryString, values);
+
 
   return pool
     .query(queryString, values)
