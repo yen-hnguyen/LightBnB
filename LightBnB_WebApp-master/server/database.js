@@ -89,12 +89,13 @@ exports.addUser = addUser;
  */
 const getAllReservations = function(guest_id, limit = 10) {
   const queryString = `
-    SELECT properties.*, reservations.*
+    SELECT reservations.*, properties.*, AVG(rating) as average_rating
     FROM properties
-    JOIN reservations ON properties.id = property_id
-    WHERE guest_id = $1
+    JOIN reservations ON properties.id = reservations.property_id
+    JOIN property_reviews ON properties.id = property_reviews.property_id
+    WHERE reservations.guest_id = $1
     GROUP BY reservations.id, properties.id
-    ORDER BY start_date ASC
+    ORDER BY start_date DESC
     LIMIT $2;`;
   const values = [guest_id, limit];
 
