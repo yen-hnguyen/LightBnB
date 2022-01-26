@@ -155,9 +155,6 @@ const getAllProperties = (options, limit = 10) => {
     ORDER BY cost_per_night
     LIMIT $${values.length}`;
 
-  console.log(queryString, values);
-
-
   return pool
     .query(queryString, values)
     .then(result => {
