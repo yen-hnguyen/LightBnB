@@ -11,7 +11,7 @@ This project was built as an exercise to design a database and use server-side J
 * Users can add their new property to the website
 
 ## LightBnb Database ERD
-![Project ERD](images/LightBnb_Database_ERD.png)
+![Project ERD](images/LightBnB_Database_ERD.png)
 
 ## Project Structure
 
