@@ -1,7 +1,7 @@
 # LightBnB
 
 ## Project Description
-LightBnb is a clone of AirBnb. 
+LightBnb is an Airbnb clone 
 
 This project was built as an exercise to design a database and use server-side JS to display the information from queries to web pages
 
