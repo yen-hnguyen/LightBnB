@@ -1,5 +1,18 @@
 # LightBnB
 
+## Project Description
+LightBnb is a clone of AirBnb. 
+
+This project was built as an exercise to design a database and use server-side JS to display the information from queries to web pages
+
+### Project Features
+* New users can sign up for LightBnb
+* Users can view their past and upcoming reservations and properties
+* Users can add their new property to the website
+
+## LightBnb Database ERD
+![Project ERD](images/LightBnb_Database_ERD.png)
+
 ## Project Structure
 
 ```
